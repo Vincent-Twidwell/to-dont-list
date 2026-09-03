@@ -24,8 +24,9 @@ class ToDoListItem extends StatelessWidget {
     // The BuildContext indicates where the build is
     // taking place and therefore which theme to use.
 
+  //Bug fix 2: test look for black54 not black
     return completed //
-        ? Colors.black
+        ? Colors.black54
         : Theme.of(context).primaryColor;
   }
 
