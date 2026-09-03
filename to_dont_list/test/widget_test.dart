@@ -12,6 +12,7 @@ import 'package:to_dont_list/main.dart';
 import 'package:to_dont_list/objects/item.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 
+//Bug fix 1: test checks to see if item is abbreviated correctly (from 2 to 1 chars)
 void main() {
   test('Item abbreviation should be first letter', () {
     const item = Item(name: "add more todos");
