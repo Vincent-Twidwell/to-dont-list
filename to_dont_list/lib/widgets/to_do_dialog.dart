@@ -45,6 +45,8 @@ class _ToDoDialogState extends State<ToDoDialog> {
           child: const Text('OK'),
           onPressed: () {
             setState(() {
+              //here*
+              widget.onListAdded(valueText, _inputController);
               Navigator.pop(context);
             });
           },
@@ -60,7 +62,8 @@ class _ToDoDialogState extends State<ToDoDialog> {
               onPressed: value.text.isNotEmpty
                   ? () {
                       setState(() {
-                        widget.onListAdded(valueText, _inputController);
+                        //remove line below, incorporated above* as it adds an item to list
+                        //widget.onListAdded(valueText, _inputController);
                         Navigator.pop(context);
                       });
                     }
