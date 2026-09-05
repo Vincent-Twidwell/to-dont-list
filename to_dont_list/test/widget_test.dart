@@ -80,6 +80,7 @@ void main() {
     expect(find.text("hi"), findsOneWidget);
 
     await tester.tap(find.byKey(const Key("OKButton")));
+    //^FlutterError (The finder "Found 0 widgets with key [<'OKButton'>]: []" (used in a call to "tap()") could not find any matching widgets.)
     await tester.pump();
     expect(find.text("hi"), findsOneWidget);
 
