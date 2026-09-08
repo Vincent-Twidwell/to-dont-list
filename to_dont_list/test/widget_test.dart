@@ -12,7 +12,6 @@ import 'package:to_dont_list/main.dart';
 import 'package:to_dont_list/objects/item.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 
-//Bug fix 1: test checks to see if item is abbreviated correctly (from 2 to 1 chars)
 void main() {
   test('Item abbreviation should be first letter', () {
     const item = Item(name: "add more todos");
@@ -34,7 +33,7 @@ void main() {
     // that the Text widgets appear exactly once in the widget tree.
     expect(textFinder, findsOneWidget);
   });
-//Bug fix 2: test itself asked (name:"t") not (name: "test")
+
   testWidgets('ToDoListItem has a Circle Avatar with abbreviation',
       (tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -52,11 +51,12 @@ void main() {
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify
     // that the Text widgets appear exactly once in the widget tree.
-    //Bug fix 2: wrong color for circleAvatars
     expect(abbvFinder, findsOneWidget);
     expect(circ.backgroundColor, Colors.black54);
+    //from "t" to "test"
     expect(ctext.data, "test");
   });
+  //bug when "test", "t", "test"
 
   testWidgets('Default ToDoList has one item', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: ToDoList()));
@@ -80,7 +80,6 @@ void main() {
     expect(find.text("hi"), findsOneWidget);
 
     await tester.tap(find.byKey(const Key("OKButton")));
-    //^FlutterError (The finder "Found 0 widgets with key [<'OKButton'>]: []" (used in a call to "tap()") could not find any matching widgets.)
     await tester.pump();
     expect(find.text("hi"), findsOneWidget);
 

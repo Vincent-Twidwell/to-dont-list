@@ -39,38 +39,35 @@ class _ToDoDialogState extends State<ToDoDialog> {
         decoration: const InputDecoration(hintText: "type something here"),
       ),
       actions: <Widget>[
-        ElevatedButton(
-          //bug fix: spelling Ok - > OK
-          key: const Key("OKButton"),
-          style: yesStyle,
-          child: const Text('OK'),
-          onPressed: () {
-            setState(() {
-              //here*
-              widget.onListAdded(valueText, _inputController);
-              Navigator.pop(context);
-            });
-          },
-        ),
-
-        // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: _inputController,
           builder: (context, value, child) {
             return ElevatedButton(
-              key: const Key("CancelButton"),
-              style: noStyle,
-              onPressed: value.text.isNotEmpty
-                  ? () {
-                      setState(() {
-                        //remove line below, incorporated above* as it adds an item to list
-                        //widget.onListAdded(valueText, _inputController);
-                        Navigator.pop(context);
-                      });
-                    }
-                  : null,
-              child: const Text('Cancel'),
-            );
+          //bug fix: spelling Ok - > OK
+            key: const Key("OKButton"),
+            style: yesStyle,
+            onPressed: value.text.isNotEmpty
+            ? () {
+              setState(() {
+              //here*
+                widget.onListAdded(valueText, _inputController);
+                Navigator.pop(context);
+              });
+          }
+        : null,
+        child: const Text('OK'),
+        );
+      },
+    ),
+        // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
+        ElevatedButton(
+          key: const Key("CancelButton"),
+          style: noStyle,
+          child: const Text('Cancel'),
+          onPressed: () {
+            setState(() {
+              Navigator.pop(context);
+            });
           },
         ),
       ],
