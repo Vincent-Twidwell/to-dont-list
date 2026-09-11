@@ -10,83 +10,148 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:to_dont_list/main.dart';
 import 'package:to_dont_list/objects/books.dart';
+import 'package:to_dont_list/widgets/book_dialog.dart';
 import 'package:to_dont_list/widgets/book_list_item.dart';
 
 void main() {
-  test('Item abbreviation should be first letter', () {
-    const item = Books(title: "add more todos");
-    expect(item.abbrev(), "a");
-  });
+  test('Color matches each status', () {
+      expect(BookStatus.unopened.color, Colors.blue);
+      expect(BookStatus.started.color, Colors.yellow);
+      expect(BookStatus.finished.color, Colors.green);
+    });
 
-  // Yes, you really need the MaterialApp and Scaffold
-  testWidgets('ToDoListItem has a text', (tester) async {
-    await tester.pumpWidget(MaterialApp(
+  test('Next cycles from: unopened -> started -> finished -> unopened', () {
+      expect(BookStatus.unopened.next, BookStatus.started);
+      expect(BookStatus.started.next, BookStatus.finished);
+      expect(BookStatus.finished.next, BookStatus.unopened);
+    });
+
+  test('CopyWith changes only the specified field', () {
+      const book = Books(title: "Dune", author: "Herbert");
+
+      final statusChanged = book.copyWith(status: BookStatus.started);
+      expect(statusChanged.title, "Dune");
+      expect(statusChanged.author, "Herbert");
+      expect(statusChanged.status, BookStatus.started);
+
+      final titleChanged = book.copyWith(title: "Dune Messiah");
+      expect(titleChanged.title, "Dune Messiah");
+      expect(titleChanged.author, "Herbert");
+      expect(titleChanged.status, BookStatus.unopened);
+    });
+  testWidgets('CircleAvatar shows correct word and color per status',
+        (tester) async {
+      Future<void> pumpWithStatus(BookStatus status) => tester.pumpWidget(
+            MaterialApp(
+                home: Scaffold(
+                    body: BookListItem(
+              book: Books(title: "test", status: status),
+              onStatusChanged: (Books book, BookStatus s) {},
+              onDeleteItem: (Books book) {},
+            ))),
+          );
+
+      await pumpWithStatus(BookStatus.unopened);
+      CircleAvatar circ = tester.firstWidget(find.byType(CircleAvatar));
+      Text ctext = circ.child as Text;
+      expect(circ.backgroundColor, Colors.blue);
+      expect(ctext.data, "new");
+
+      await pumpWithStatus(BookStatus.started);
+      circ = tester.firstWidget(find.byType(CircleAvatar));
+      ctext = circ.child as Text;
+      expect(circ.backgroundColor, Colors.yellow);
+      expect(ctext.data, "reading");
+
+      await pumpWithStatus(BookStatus.finished);
+      circ = tester.firstWidget(find.byType(CircleAvatar));
+      ctext = circ.child as Text;
+      expect(circ.backgroundColor, Colors.green);
+      expect(ctext.data, "read");
+    });
+
+  testWidgets('Tapping the tile advances status via onStatusChanged',
+        (tester) async {
+      Books? changedBook;
+      BookStatus? newStatus;
+
+      await tester.pumpWidget(MaterialApp(
+        //made changes to theme for several test as this one specific error regarding splashFactory prevented progress
+        //I suspect this is a error with flutter at the time, as I have found many others with the same issue
+          theme: ThemeData(splashFactory: InkRipple.splashFactory),
+          home: Scaffold(
+              body: BookListItem(
+        book: const Books(title: "test"),
+        onStatusChanged: (Books book, BookStatus status) {
+          changedBook = book;
+          newStatus = status;
+        },
+        onDeleteItem: (Books book) {},
+      ))));
+
+      await tester.tap(find.byType(ListTile));
+      await tester.pump();
+
+      expect(changedBook?.title, "test");
+      expect(newStatus, BookStatus.started);
+    });
+
+  testWidgets('OK button passes title and author to callback',
+        (tester) async {
+      String? capturedTitle;
+      String? capturedAuthor;
+
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(splashFactory: InkRipple.splashFactory),
         home: Scaffold(
-            body: BookListItem(
-                book: const Books(title: "test"),
-                completed: true,
-                onStatusChanged: (Books item, bool completed) {},
-                onDeleteItem: (Books item) {}))));
-    final textFinder = find.text('test');
+          body: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (_) => BookDialog(
+                  onListAdded: (title, author, tc, ac) {
+                    capturedTitle = title;
+                    capturedAuthor = author;
+                  },
+                ),
+              ),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      ));
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
 
-    // Use the `findsOneWidget` matcher provided by flutter_test to verify
-    // that the Text widgets appear exactly once in the widget tree.
-    expect(textFinder, findsOneWidget);
-  });
+      await tester.enterText(find.byType(TextField).first, 'Dune');
+      await tester.enterText(find.byType(TextField).last, 'Herbert');
+      await tester.pump();
 
-  testWidgets('ToDoListItem has a Circle Avatar with abbreviation',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-            body: BookListItem(
-                book: const Books(title: "test"),
-                completed: true,
-                onStatusChanged: (Books item, bool completed) {},
-                onDeleteItem: (Books item) {}))));
-    final abbvFinder = find.text('t');
-    final avatarFinder = find.byType(CircleAvatar);
+      await tester.tap(find.byKey(const Key("OKButton")));
+      await tester.pumpAndSettle();
 
-    CircleAvatar circ = tester.firstWidget(avatarFinder);
-    Text ctext = circ.child as Text;
+      expect(capturedTitle, 'Dune');
+      expect(capturedAuthor, 'Herbert');
+    });
+    
+    testWidgets('Clicking and typing adds a book to the list',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp(theme: ThemeData(splashFactory: InkRipple.splashFactory),home: const BookList()));
 
-    // Use the `findsOneWidget` matcher provided by flutter_test to verify
-    // that the Text widgets appear exactly once in the widget tree.
-    expect(abbvFinder, findsOneWidget);
-    expect(circ.backgroundColor, Colors.black54);
-    //from "t" to "test"
-    expect(ctext.data, "t");
-  });
-  //bug when "test", "t", "test"
+      expect(find.byType(TextField), findsNothing);
 
-  testWidgets('Default ToDoList has one item', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: BookList()));
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+      expect(find.text("hi"), findsNothing);
 
-    final listItemFinder = find.byType(BookListItem);
+      await tester.enterText(find.byType(TextField).first, 'hi');
+      await tester.pump();
+      expect(find.text("hi"), findsOneWidget);
 
-    expect(listItemFinder, findsOneWidget);
-  });
+      await tester.tap(find.byKey(const Key("OKButton")));
+      await tester.pump();
+      expect(find.text("hi"), findsOneWidget);
 
-  testWidgets('Clicking and Typing adds item to ToDoList', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: BookList()));
-
-    expect(find.byType(TextField), findsNothing);
-
-    await tester.tap(find.byType(FloatingActionButton));
-    await tester.pump(); // Pump after every action to rebuild the widgets
-    expect(find.text("hi"), findsNothing);
-
-    await tester.enterText(find.byType(TextField), 'hi');
-    await tester.pump();
-    expect(find.text("hi"), findsOneWidget);
-
-    await tester.tap(find.byKey(const Key("OKButton")));
-    await tester.pump();
-    expect(find.text("hi"), findsOneWidget);
-
-    final listItemFinder = find.byType(BookListItem);
-
-    expect(listItemFinder, findsNWidgets(2));
-  });
-
-  // One to test the tap and press actions on the items?
+      expect(find.byType(BookListItem), findsNWidgets(2));
+    });
 }

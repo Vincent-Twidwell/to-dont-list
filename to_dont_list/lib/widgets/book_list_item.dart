@@ -35,7 +35,6 @@ class BookListItem extends StatelessWidget {
       leading: CircleAvatar(
         radius: 30,
         backgroundColor: book.status.color,
-        //bugfix: swapping item.name and item.abbrev
         child: Text(book.getStatus()),
       ),
       title: Text(

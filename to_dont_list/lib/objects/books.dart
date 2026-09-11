@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+//tracks the different status of the books
 enum BookStatus {unopened, started, finished}
 
 extension BookStatusX on BookStatus {
@@ -16,6 +17,7 @@ extension BookStatusX on BookStatus {
     }
   }
 
+//cycles the status
   BookStatus get next {
     switch (this) {
       case BookStatus.unopened:
@@ -34,7 +36,7 @@ class Books {
   final String author;
   final BookStatus status;
 
-  //Bug Fix 1: Changed from (0,2) -> (0,1) as to get only first char
+  //retrieves book status
   String getStatus() {
     switch (status) {
       case BookStatus.unopened:

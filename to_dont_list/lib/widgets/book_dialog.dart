@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//books have title and (optionally) author
 typedef BookListAddedCallback = Function(
     String title, String author, TextEditingController titleController, TextEditingController authorController);
 
@@ -57,17 +58,16 @@ class _BookDialogState extends State<BookDialog> {
       ),
       
       actions: <Widget>[
+        // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: _titleController,
           builder: (context, value, child) {
             return ElevatedButton(
-          //bug fix: spelling Ok - > OK
             key: const Key("OKButton"),
             style: yesStyle,
             onPressed: value.text.isNotEmpty
             ? () {
               setState(() {
-              //here*
                 widget.onListAdded(titleText, authorText, _titleController, _authorController);
                 Navigator.pop(context);
               });
@@ -77,7 +77,7 @@ class _BookDialogState extends State<BookDialog> {
         );
       },
     ),
-        // https://stackoverflow.com/questions/52468987/how-to-turn-disabled-button-into-enabled-button-depending-on-conditions
+        
         ElevatedButton(
           key: const Key("CancelButton"),
           style: noStyle,
