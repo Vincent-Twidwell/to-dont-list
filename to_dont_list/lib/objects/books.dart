@@ -29,8 +29,9 @@ extension BookStatusX on BookStatus {
 }
 
 class Books {
-  const Books({required this.title, this.status = BookStatus.unopened});
+  const Books({required this.title, this.author = "", this.status = BookStatus.unopened});
   final String title;
+  final String author;
   final BookStatus status;
 
   //Bug Fix 1: Changed from (0,2) -> (0,1) as to get only first char
@@ -46,10 +47,15 @@ class Books {
   }
 
   //the function creates a new book since title and status and title are final
-Books copyWith({String? title, BookStatus? status}) {
+Books copyWith({String? title, String? author, BookStatus? status}) {
   String newTitle = this.title;
   if (title != null) {
     newTitle = title;
+  }
+
+  String newAuthor = this.author;
+  if (author != null) {
+    newAuthor = author;
   }
 
   BookStatus newStatus = this.status;
@@ -57,7 +63,7 @@ Books copyWith({String? title, BookStatus? status}) {
     newStatus = status;
   }
 
-  return Books(title: newTitle, status: newStatus);
+  return Books(title: newTitle, author: newAuthor, status: newStatus);
 }
   
 }

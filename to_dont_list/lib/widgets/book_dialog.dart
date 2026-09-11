@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 typedef BookListAddedCallback = Function(
-    String value, TextEditingController textConroller);
+    String title, String author, TextEditingController titleController, TextEditingController authorController);
 
 class BookDialog extends StatefulWidget {
   const BookDialog({
@@ -17,30 +17,48 @@ class BookDialog extends StatefulWidget {
 
 class _BookDialogState extends State<BookDialog> {
   // Dialog with text from https://www.appsdeveloperblog.com/alert-dialog-with-a-text-field-in-flutter/
-  final TextEditingController _inputController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _authorController = TextEditingController();
+
   final ButtonStyle yesStyle = ElevatedButton.styleFrom(
       textStyle: const TextStyle(fontSize: 20), backgroundColor: Colors.green);
   final ButtonStyle noStyle = ElevatedButton.styleFrom(
       textStyle: const TextStyle(fontSize: 20), backgroundColor: Colors.red);
 
-  String valueText = "";
+  String titleText = "";
+  String authorText = "";
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Book To Add'),
-      content: TextField(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextField(
         onChanged: (value) {
           setState(() {
-            valueText = value;
+            titleText = value;
           });
         },
-        controller: _inputController,
+        controller: _titleController,
         decoration: const InputDecoration(hintText: "Book title"),
       ),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                authorText = value;
+              });
+            },
+            controller: _authorController,
+            decoration: const InputDecoration(hintText: "Author name"),
+          )
+        ],
+      ),
+      
       actions: <Widget>[
         ValueListenableBuilder<TextEditingValue>(
-          valueListenable: _inputController,
+          valueListenable: _titleController,
           builder: (context, value, child) {
             return ElevatedButton(
           //bug fix: spelling Ok - > OK
@@ -50,7 +68,7 @@ class _BookDialogState extends State<BookDialog> {
             ? () {
               setState(() {
               //here*
-                widget.onListAdded(valueText, _inputController);
+                widget.onListAdded(titleText, authorText, _titleController, _authorController);
                 Navigator.pop(context);
               });
           }

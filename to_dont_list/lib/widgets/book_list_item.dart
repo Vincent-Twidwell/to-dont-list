@@ -42,6 +42,7 @@ class BookListItem extends StatelessWidget {
         book.title,
         style: _getTextStyle(),
       ),
+      subtitle: book.author.isNotEmpty ? Text(book.author) : null,
     );
   }
 }

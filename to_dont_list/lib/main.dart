@@ -33,13 +33,14 @@ class _BookListState extends State<BookList> {
     });
   }
 
-  void _handleNewBook(String title, TextEditingController textController) {
+  void _handleNewBook(String title, String author, TextEditingController textController, TextEditingController authorController) {
     setState(() {
       print("Adding new item");
     //bug fix: change itemText to a string var not literal string
     //remove const so it can change
-      books.insert(0, Books(title: title));
+      books.insert(0, Books(title: title, author: author));
       textController.clear();
+      authorController.clear();
     });
   }
 
