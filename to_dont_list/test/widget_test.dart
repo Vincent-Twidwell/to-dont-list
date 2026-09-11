@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:to_dont_list/main.dart';
-import 'package:to_dont_list/objects/item.dart';
+import 'package:to_dont_list/objects/books.dart';
 import 'package:to_dont_list/widgets/to_do_items.dart';
 
 void main() {
   test('Item abbreviation should be first letter', () {
-    const item = Item(name: "add more todos");
+    const item = Books(name: "add more todos");
     expect(item.abbrev(), "a");
   });
 
@@ -23,10 +23,10 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: Scaffold(
             body: ToDoListItem(
-                item: const Item(name: "test"),
+                item: const Books(name: "test"),
                 completed: true,
-                onListChanged: (Item item, bool completed) {},
-                onDeleteItem: (Item item) {}))));
+                onListChanged: (Books item, bool completed) {},
+                onDeleteItem: (Books item) {}))));
     final textFinder = find.text('test');
 
     // Use the `findsOneWidget` matcher provided by flutter_test to verify
@@ -39,11 +39,11 @@ void main() {
     await tester.pumpWidget(MaterialApp(
         home: Scaffold(
             body: ToDoListItem(
-                item: const Item(name: "test"),
+                item: const Books(name: "test"),
                 completed: true,
-                onListChanged: (Item item, bool completed) {},
-                onDeleteItem: (Item item) {}))));
-    final abbvFinder = find.text('test');
+                onListChanged: (Books item, bool completed) {},
+                onDeleteItem: (Books item) {}))));
+    final abbvFinder = find.text('t');
     final avatarFinder = find.byType(CircleAvatar);
 
     CircleAvatar circ = tester.firstWidget(avatarFinder);
@@ -54,7 +54,7 @@ void main() {
     expect(abbvFinder, findsOneWidget);
     expect(circ.backgroundColor, Colors.black54);
     //from "t" to "test"
-    expect(ctext.data, "test");
+    expect(ctext.data, "t");
   });
   //bug when "test", "t", "test"
 

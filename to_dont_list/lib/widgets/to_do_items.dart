@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:to_dont_list/objects/item.dart';
+import 'package:to_dont_list/objects/books.dart';
 
-typedef ToDoListChangedCallback = Function(Item item, bool completed);
-typedef ToDoListRemovedCallback = Function(Item item);
+typedef ToDoListChangedCallback = Function(Books item, bool completed);
+typedef ToDoListRemovedCallback = Function(Books item);
 
 class ToDoListItem extends StatelessWidget {
   ToDoListItem(
@@ -12,7 +12,7 @@ class ToDoListItem extends StatelessWidget {
       required this.onDeleteItem})
       : super(key: ObjectKey(item));
 
-  final Item item;
+  final Books item;
   final bool completed;
 
   final ToDoListChangedCallback onListChanged;
@@ -56,7 +56,6 @@ class ToDoListItem extends StatelessWidget {
         child: Text(item.abbrev()),
       ),
       title: Text(
-        //^
         item.name,
         style: _getTextStyle(context),
       ),
