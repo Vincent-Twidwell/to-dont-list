@@ -8,7 +8,7 @@ extension BookStatusX on BookStatus {
   Color get color {
     switch (this) {
       case BookStatus.unopened:
-        return Colors.grey;
+        return Colors.blue;
       case BookStatus.started:
         return Colors.yellow;
       case BookStatus.finished:
@@ -28,16 +28,36 @@ extension BookStatusX on BookStatus {
   }
 }
 
-class Item {
-  const Item({required this.name, this.status = BookStatus.unopened});
-
-  final String name;
+class Books {
+  const Books({required this.title, this.status = BookStatus.unopened});
+  final String title;
   final BookStatus status;
 
   //Bug Fix 1: Changed from (0,2) -> (0,1) as to get only first char
-  String abbrev() {
-    return name.substring(0, 1);
+  String getStatus() {
+    switch (status) {
+      case BookStatus.unopened:
+        return "new";
+      case BookStatus.started:
+        return "reading";
+      case BookStatus.finished:
+        return "read";
+    }
   }
 
+  //the function creates a new book since title and status and title are final
+Books copyWith({String? title, BookStatus? status}) {
+  String newTitle = this.title;
+  if (title != null) {
+    newTitle = title;
+  }
+
+  BookStatus newStatus = this.status;
+  if (status != null) {
+    newStatus = status;
+  }
+
+  return Books(title: newTitle, status: newStatus);
+}
   
 }

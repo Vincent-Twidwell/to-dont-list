@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-typedef ToDoListAddedCallback = Function(
+typedef BookListAddedCallback = Function(
     String value, TextEditingController textConroller);
 
-class ToDoDialog extends StatefulWidget {
-  const ToDoDialog({
+class BookDialog extends StatefulWidget {
+  const BookDialog({
     super.key,
     required this.onListAdded,
   });
 
-  final ToDoListAddedCallback onListAdded;
+  final BookListAddedCallback onListAdded;
 
   @override
-  State<ToDoDialog> createState() => _ToDoDialogState();
+  State<BookDialog> createState() => _BookDialogState();
 }
 
-class _ToDoDialogState extends State<ToDoDialog> {
+class _BookDialogState extends State<BookDialog> {
   // Dialog with text from https://www.appsdeveloperblog.com/alert-dialog-with-a-text-field-in-flutter/
   final TextEditingController _inputController = TextEditingController();
   final ButtonStyle yesStyle = ElevatedButton.styleFrom(
